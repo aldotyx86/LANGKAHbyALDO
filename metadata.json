@@ -1,0 +1,6 @@
+{
+  "name": "LANGKAH - Pendampingan Harian IKM & UMKM",
+  "description": "Layanan Pengembangan Kapasitas Harian IKM UMKM Lombok Timur & NTB - Gamifikasi UMKM Naik Kelas Terintegrasi Multi-Dinas & Bank Indonesia.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
