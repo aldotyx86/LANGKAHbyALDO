@@ -29,6 +29,10 @@ export const AdminDashboard: React.FC = () => {
     tasks, 
     adminInfo, 
     userRole,
+    currentPendamping,
+    currentAdminDinas,
+    pendampingList,
+    loginAsPendamping,
     reviewTaskSubmission, 
     loginAsUmkm,
     fireConfetti
@@ -160,6 +164,76 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Active Officer Identity Card: Bedakan Siapa Petugas yang Sedang Login */}
+          {userRole === 'pendamping' ? (
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 flex flex-wrap items-center justify-between gap-4 mt-3">
+              <div className="flex items-center gap-3">
+                <img 
+                  src={currentPendamping.avatarUrl} 
+                  alt={currentPendamping.name} 
+                  className="w-12 h-12 rounded-xl object-cover border-2 border-cyan-400 shrink-0"
+                />
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-white font-black text-sm">{currentPendamping.name}</span>
+                    <span className="bg-cyan-400 text-slate-950 font-mono font-bold text-[10px] px-2 py-0.5 rounded-full">
+                      {currentPendamping.badgeCode}
+                    </span>
+                    <span className="bg-white/20 text-teal-100 text-[10px] px-2 py-0.5 rounded-full">
+                      8 Petugas Resmi Lombok
+                    </span>
+                  </div>
+                  <div className="text-xs text-teal-200">
+                    NIP: <span className="font-mono text-white">{currentPendamping.nip}</span> • Wilayah Tugas: <strong className="text-white">{currentPendamping.assignedRegion}</strong>
+                  </div>
+                  <div className="text-[11px] text-teal-300/90 mt-0.5">
+                    Kecamatan Dampingan: <span className="text-white font-semibold">{currentPendamping.districtCoverage}</span> • Fokus: <span className="text-white">{currentPendamping.specialization}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedRegion(selectedRegion === currentPendamping.assignedRegion ? 'all' : currentPendamping.assignedRegion)}
+                  className={`px-3.5 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer shadow-md ${
+                    selectedRegion === currentPendamping.assignedRegion
+                      ? 'bg-amber-400 text-slate-950 hover:bg-amber-300'
+                      : 'bg-white/20 text-white hover:bg-white/30 border border-white/20'
+                  }`}
+                >
+                  {selectedRegion === currentPendamping.assignedRegion 
+                    ? `✓ Filter Wilayah Saya Aktif (${currentPendamping.assignedRegion.replace('Kabupaten ', '')})` 
+                    : `Fokus Wilayah Binaan Saya (${currentPendamping.assignedRegion.replace('Kabupaten ', '')})`}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 flex flex-wrap items-center justify-between gap-4 mt-3">
+              <div className="flex items-center gap-3">
+                <img 
+                  src={currentAdminDinas.avatarUrl} 
+                  alt={currentAdminDinas.name} 
+                  className="w-12 h-12 rounded-xl object-cover border-2 border-amber-400 shrink-0"
+                />
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-white font-black text-sm">{currentAdminDinas.name}</span>
+                    <span className="bg-amber-400 text-slate-950 font-bold text-[10px] px-2 py-0.5 rounded-full">
+                      DINAS-PROV
+                    </span>
+                  </div>
+                  <div className="text-xs text-amber-200">
+                    NIP: <span className="font-mono text-white">{currentAdminDinas.nip}</span> • Jabatan: <strong className="text-white">{currentAdminDinas.position}</strong>
+                  </div>
+                  <div className="text-[11px] text-amber-300/90 mt-0.5">
+                    Instansi: {currentAdminDinas.agency} (Portofolio Bank Indonesia NTB 2024-2025)
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

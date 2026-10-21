@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import confetti from 'canvas-confetti';
 import { 
+  AdminDinasProfile,
   AgencyData, 
   LegalitasItem,
   LegalitasStatus,
   LegalitasType,
   LombokRegion,
+  PendampingProfile,
   SelfAssessmentData, 
   TaskItem, 
   TaskSubmission, 
@@ -17,25 +19,34 @@ import {
   INITIAL_TASKS, 
   INITIAL_UMKM_USERS, 
   INTEGRATED_AGENCIES,
+  OFFICIAL_PENDAMPING_LIST,
+  INITIAL_ADMIN_DINAS,
   createDefaultLegalitasTracker 
 } from '../data/initialData';
 
 interface AppContextType {
   userRole: UserRole;
   currentUmkm: UmkmProfile | null;
+  currentPendamping: PendampingProfile;
+  currentAdminDinas: AdminDinasProfile;
+  pendampingList: PendampingProfile[];
   umkmList: UmkmProfile[];
   tasks: TaskItem[];
   agencies: AgencyData[];
   adminInfo: {
     name: string;
+    nip: string;
     office: string;
     assignedRegion: string;
+    districtCoverage: string;
     totalLombokUmkm: number;
     companionStaffCount: number;
+    specialization: string;
+    badgeCode: string;
   };
   aiQuota: number;
   loginAsUmkm: (umkmId: string) => void;
-  loginAsPendamping: () => void;
+  loginAsPendamping: (pendampingId?: string) => void;
   loginAsAdminDinas: () => void;
   logout: () => void;
   registerUmkm: (newProfile: Partial<UmkmProfile> & { password?: string }) => UmkmProfile;
@@ -61,6 +72,7 @@ interface AppContextType {
 const STORAGE_KEY_UMKM = 'langkah_umkm_profiles_v2';
 const STORAGE_KEY_ROLE = 'langkah_user_role_v2';
 const STORAGE_KEY_ACTIVE_ID = 'langkah_active_umkm_id_v2';
+const STORAGE_KEY_PENDAMPING_ID = 'langkah_active_pendamping_id_v2';
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
@@ -116,6 +128,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return 'umkm-1';
   });
 
+  const [activePendampingId, setActivePendampingId] = useState<string>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY_PENDAMPING_ID);
+      if (stored) return stored;
+    } catch {
+      // fallback
+    }
+    return 'pend-1';
+  });
+
   const [aiQuota, setAiQuota] = useState<number>(15);
 
   useEffect(() => {
@@ -130,14 +152,49 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       localStorage.setItem(STORAGE_KEY_ROLE, userRole);
       localStorage.setItem(STORAGE_KEY_ACTIVE_ID, activeUmkmId);
+      localStorage.setItem(STORAGE_KEY_PENDAMPING_ID, activePendampingId);
     } catch (e) {
       console.error('Failed to sync auth state', e);
     }
-  }, [userRole, activeUmkmId]);
+  }, [userRole, activeUmkmId, activePendampingId]);
 
   const currentUmkm = useMemo(() => {
     return umkmList.find(u => u.id === activeUmkmId) || umkmList[0] || null;
   }, [umkmList, activeUmkmId]);
+
+  const currentPendamping = useMemo(() => {
+    return OFFICIAL_PENDAMPING_LIST.find(p => p.id === activePendampingId) || OFFICIAL_PENDAMPING_LIST[0];
+  }, [activePendampingId]);
+
+  const currentAdminDinas = INITIAL_ADMIN_DINAS;
+  const pendampingList = OFFICIAL_PENDAMPING_LIST;
+
+  const adminInfo = useMemo(() => {
+    if (userRole === 'admin_dinas') {
+      return {
+        name: currentAdminDinas.name,
+        nip: currentAdminDinas.nip,
+        office: currentAdminDinas.agency,
+        assignedRegion: 'Seluruh Wilayah Pulau Lombok (5 Kab/Kota)',
+        districtCoverage: 'Koordinasi Lintas Dinas & Bank Indonesia NTB',
+        totalLombokUmkm: 75000,
+        companionStaffCount: 8,
+        specialization: 'Kebijakan UMKM Naik Kelas & Asta Cita Digital',
+        badgeCode: 'DINAS-PROV'
+      };
+    }
+    return {
+      name: currentPendamping.name,
+      nip: currentPendamping.nip,
+      office: currentPendamping.agency,
+      assignedRegion: currentPendamping.assignedRegion,
+      districtCoverage: currentPendamping.districtCoverage,
+      totalLombokUmkm: 75000,
+      companionStaffCount: 8,
+      specialization: currentPendamping.specialization,
+      badgeCode: currentPendamping.badgeCode
+    };
+  }, [userRole, currentPendamping, currentAdminDinas]);
 
   const fireConfetti = () => {
     try {
@@ -159,7 +216,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const loginAsPendamping = () => {
+  const loginAsPendamping = (pendampingId?: string) => {
+    if (pendampingId) {
+      const found = OFFICIAL_PENDAMPING_LIST.find(p => p.id === pendampingId || p.nip === pendampingId);
+      if (found) {
+        setActivePendampingId(found.id);
+      }
+    }
     setUserRole('pendamping');
   };
 
@@ -383,11 +446,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const currentSub = umkm.submissions[taskId];
       if (!currentSub) return umkm;
 
+      const reviewerName = userRole === 'admin_dinas'
+        ? `${currentAdminDinas.name} (${currentAdminDinas.agency})`
+        : `${currentPendamping.name} (Pendamping ${currentPendamping.assignedRegion})`;
+
       const updatedSub: TaskSubmission = {
         ...currentSub,
         status: approved ? 'completed' : 'revision_needed',
         reviewedAt: new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }),
-        reviewedBy: 'Tim Pendamping Wilayah Lombok & BI NTB',
+        reviewedBy: reviewerName,
         feedback
       };
 
@@ -446,6 +513,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const resetDemoData = () => {
     setUmkmList(INITIAL_UMKM_USERS);
     setActiveUmkmId('umkm-1');
+    setActivePendampingId('pend-1');
     setUserRole('umkm');
   };
 
@@ -454,16 +522,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       value={{
         userRole,
         currentUmkm,
+        currentPendamping,
+        currentAdminDinas,
+        pendampingList,
         umkmList,
         tasks: INITIAL_TASKS,
         agencies: INTEGRATED_AGENCIES,
-        adminInfo: {
-          name: 'I Gede Satria, S.E. & 8 Tenaga Pendamping',
-          office: 'Dinas Koperasi & UKM / Perindustrian NTB & BI NTB',
-          assignedRegion: 'Pulau Lombok (Mataram, Lobar, Loteng, Lotim, KLU)',
-          totalLombokUmkm: 75000,
-          companionStaffCount: 8
-        },
+        adminInfo,
         aiQuota,
         loginAsUmkm,
         loginAsPendamping,

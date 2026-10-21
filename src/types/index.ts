@@ -153,3 +153,33 @@ export interface AgencyData {
   iconName: string;
   activeProgramsCount: number;
 }
+
+export interface PendampingProfile {
+  id: string;
+  nip: string;
+  username: string;
+  name: string;
+  title: string;
+  phone: string;
+  email: string;
+  assignedRegion: LombokRegion | 'Seluruh Pulau Lombok';
+  districtCoverage: string;
+  specialization: string;
+  agency: string;
+  avatarUrl: string;
+  totalDampingan: number;
+  verifiedCount: number;
+  badgeCode: string;
+}
+
+export interface AdminDinasProfile {
+  id: string;
+  nip: string;
+  username: string;
+  name: string;
+  agency: string;
+  position: string;
+  phone: string;
+  email: string;
+  avatarUrl: string;
+}

@@ -10,7 +10,9 @@ import {
   HelpCircle,
   RefreshCw,
   Zap,
-  Building2
+  Building2,
+  BookOpen,
+  CheckCircle2
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
@@ -26,29 +28,53 @@ interface AiMentorModalProps {
   onClose: () => void;
 }
 
-const QUICK_PROMPTS = [
-  'Bagaimana syarat daftar Sertifikat Halal Sehati BPJPH di NTB?',
-  'Apa langkah mengurus NIB OSS untuk usaha rumahan?',
-  'Cara buat SPP-IRT rekomendasi Dinas Kesehatan di Lombok',
-  'Tips kemasan makanan agar tahan lama & lolos kurasi BI NTB',
-  'Syarat pasang QRIS Merchant lewat Bank NTB Syariah'
+const PRESET_TOPICS = [
+  {
+    title: 'Sertifikat Halal Gratis (SEHATI)',
+    desc: 'Syarat & cara daftar di BPJPH NTB',
+    prompt: 'Bagaimana syarat dan alur daftar Sertifikat Halal Sehati BPJPH di Lombok NTB?'
+  },
+  {
+    title: 'NIB (Nomor Induk Berusaha)',
+    desc: 'Langkah terbit izin resmi OSS RBA',
+    prompt: 'Apa saja syarat dan langkah membuat NIB gratis di portal OSS RBA?'
+  },
+  {
+    title: 'Izin Edar P-IRT Dinkes',
+    desc: 'Standar pangan olahan masuk minimarket',
+    prompt: 'Bagaimana cara dan syarat mengurus SPP-IRT rekomendasi Dinas Kesehatan di Lombok?'
+  },
+  {
+    title: 'QRIS Bank NTB Syariah / BI',
+    desc: 'Pembayaran nontunai & histori bank',
+    prompt: 'Bagaimana cara pasang QRIS Merchant lewat Bank NTB Syariah dan keuntungannya?'
+  },
+  {
+    title: 'Standardisasi Kemasan Ritel',
+    desc: 'Fasilitasi UPTD Rumah Kemasan NTB',
+    prompt: 'Apa standar kemasan produk olahan ritel modern dan bantuan Rumah Kemasan NTB?'
+  },
+  {
+    title: 'Pendaftaran Merek HKI',
+    desc: 'Diskon tarif UMK Rp 500rb Kemenkumham',
+    prompt: 'Bagaimana cara mendaftarkan hak cipta merek HKI Kemenkumham dengan rekomendasi dinas?'
+  }
 ];
 
 export const AiMentorModal: React.FC<AiMentorModalProps> = ({ isOpen, onClose }) => {
-  const { currentUmkm, aiQuota, decrementAiQuota } = useApp();
+  const { currentUmkm } = useApp();
 
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
       sender: 'ai',
-      text: `Halo ${currentUmkm?.ownerName || 'Bapak/Ibu Pelaku Usaha'}! Saya **Langkah Mentor AI**, konsultan resmi legalitas & perizinan usaha di Pulau Lombok.\n\nAda yang bisa saya bantu terkait **NIB OSS**, **Sertifikasi Halal Gratis (SEHATI)**, **P-IRT Dinkes**, **Merek HKI**, atau **QRIS Bank Indonesia NTB** hari ini?`,
+      text: `Halo ${currentUmkm?.ownerName || 'Bapak/Ibu Pelaku Usaha'}! Saya **Langkah Mentor AI**, pusat panduan resmi legalitas & perizinan usaha di Pulau Lombok.\n\nSemua panduan resmi seputar **NIB OSS**, **Sertifikasi Halal Gratis (SEHATI)**, **P-IRT Dinkes**, **Merek HKI**, dan **QRIS Bank Indonesia NTB** telah kami siapkan di sini. Anda bisa langsung memilih topik di bawah atau mengetik pertanyaan bebas!`,
       time: 'Baru saja'
     }
   ]);
 
   const [inputPrompt, setInputPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -67,12 +93,6 @@ export const AiMentorModal: React.FC<AiMentorModalProps> = ({ isOpen, onClose })
     const promptText = (textToSend || inputPrompt).trim();
     if (!promptText || isLoading) return;
 
-    if (aiQuota <= 0) {
-      setErrorMessage('Batas harian konsultasi tercapai (15/15). Kuota Anda akan direset besok subuh agar server tetap stabil bagi 75.000 UMKM Lombok.');
-      return;
-    }
-
-    setErrorMessage('');
     const userMsg: Message = {
       id: `user-${Date.now()}`,
       sender: 'user',
@@ -108,28 +128,20 @@ export const AiMentorModal: React.FC<AiMentorModalProps> = ({ isOpen, onClose })
 
       const data = await response.json();
 
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Gagal menghubungi server Gemini AI.');
-      }
-
-      decrementAiQuota();
-
       const aiMsg: Message = {
         id: `ai-${Date.now()}`,
         sender: 'ai',
-        text: data.answer,
+        text: data.answer || 'Terima kasih atas pertanyaannya. Silakan pilih topik panduan di atas atau tanyakan ke pendamping dinas setempat.',
         time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
       };
 
       setMessages(prev => [...prev, aiMsg]);
     } catch (err: any) {
       console.error('AI Mentor Error:', err);
-      setErrorMessage(err.message || 'Gagal memproses konsultasi.');
-      // Fallback pesan edukatif
       const fallbackMsg: Message = {
-        id: `ai-err-${Date.now()}`,
+        id: `ai-fallback-${Date.now()}`,
         sender: 'ai',
-        text: `Maaf, terjadi kendala koneksi ke server AI. Panduan cepat untuk pertanyaan Anda: Silakan hubungi pendamping wilayah Anda atau akses portal resmi oss.go.id / ptsp.halal.go.id.`,
+        text: `### 📌 Panduan Resmi Cepat:\nUntuk pertanyaan Anda, silakan pastikan NIB telah terbit di **oss.go.id**, lalu daftarkan Sertifikasi Halal Gratis di **ptsp.halal.go.id**. Anda juga dapat menghubungi meja pendamping LANGKAH di dinas setempat.`,
         time: 'Baru saja'
       };
       setMessages(prev => [...prev, fallbackMsg]);
@@ -140,7 +152,7 @@ export const AiMentorModal: React.FC<AiMentorModalProps> = ({ isOpen, onClose })
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs">
-      <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-100 flex flex-col h-[85vh] max-h-[700px] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-100 flex flex-col h-[88vh] max-h-[720px] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 p-4 sm:p-5 text-white flex items-center justify-between shrink-0">
@@ -152,28 +164,44 @@ export const AiMentorModal: React.FC<AiMentorModalProps> = ({ isOpen, onClose })
               <div className="flex items-center gap-2">
                 <h3 className="font-black text-base text-white">Langkah Mentor AI</h3>
                 <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-400/30">
-                  Gemini 3.8 Flash
+                  Konsultasi Bebas & Jawaban Siap Pakai
                 </span>
               </div>
               <p className="text-[11px] text-emerald-100/90 leading-tight">
-                Konsultan Resmi Regulasi & Legalitas UMKM NTB • Server-Side Secured
+                Pusat Jawaban Resmi Regulasi & Akselerasi IKM/UMKM Se-Pulau Lombok
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Quota Badge */}
-            <div className="bg-white/10 border border-white/20 rounded-xl px-2.5 py-1 text-center hidden sm:block">
-              <span className="text-[9px] uppercase tracking-wider text-slate-300 block font-bold">Sisa Kuota:</span>
-              <span className="text-xs font-black text-amber-300">{aiQuota} / 15</span>
-            </div>
+          <button 
+            onClick={onClose}
+            className="p-1.5 text-slate-300 hover:text-white rounded-full hover:bg-white/10 transition-colors cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
-            <button 
-              onClick={onClose}
-              className="p-1.5 text-slate-300 hover:text-white rounded-full hover:bg-white/10 transition-colors cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        {/* Preset Topics Quick Bar */}
+        <div className="p-3 bg-slate-100/80 border-b border-slate-200 shrink-0">
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
+            Pilih Langsung Topik Panduan yang Ingin Dipelajari:
+          </span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+            {PRESET_TOPICS.map((topic, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleSendMessage(topic.prompt)}
+                disabled={isLoading}
+                className="p-2 text-left rounded-xl bg-white hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 transition-all cursor-pointer group shadow-2xs"
+              >
+                <strong className="block text-[11px] text-slate-800 group-hover:text-emerald-800 font-bold truncate">
+                  {topic.title}
+                </strong>
+                <span className="text-[10px] text-slate-500 truncate block">
+                  {topic.desc}
+                </span>
+              </button>
+            ))}
           </div>
         </div>
 
@@ -197,7 +225,7 @@ export const AiMentorModal: React.FC<AiMentorModalProps> = ({ isOpen, onClose })
                   ? 'bg-emerald-700 text-white rounded-tr-none'
                   : 'bg-white text-slate-800 border border-slate-200 rounded-tl-none'
               }`}>
-                <div className="whitespace-pre-wrap">
+                <div className="whitespace-pre-wrap leading-relaxed">
                   {msg.text}
                 </div>
                 <div className={`text-[10px] text-right pt-1 ${
@@ -216,36 +244,12 @@ export const AiMentorModal: React.FC<AiMentorModalProps> = ({ isOpen, onClose })
               </div>
               <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-none p-3.5 text-xs text-slate-600 flex items-center gap-2 shadow-2xs">
                 <RefreshCw className="w-3.5 h-3.5 text-emerald-600 animate-spin" />
-                <span>Mentor AI sedang membaca regulasi NTB & menyusun langkah praktis...</span>
+                <span>Memuat panduan resmi regulasi Lombok...</span>
               </div>
             </div>
           )}
 
-          {errorMessage && (
-            <div className="p-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-              <span>{errorMessage}</span>
-            </div>
-          )}
-
           <div ref={messagesEndRef} />
-        </div>
-
-        {/* Quick Suggestion Chips */}
-        <div className="px-4 py-2 bg-white border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto text-[11px] no-scrollbar shrink-0">
-          <span className="text-slate-400 font-bold whitespace-nowrap flex items-center gap-1">
-            <Zap className="w-3 h-3 text-amber-500 fill-amber-500" /> Coba:
-          </span>
-          {QUICK_PROMPTS.map((prompt, idx) => (
-            <button
-              key={idx}
-              onClick={() => handleSendMessage(prompt)}
-              disabled={isLoading}
-              className="px-2.5 py-1 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg text-slate-700 whitespace-nowrap transition-colors cursor-pointer border border-slate-200/80 disabled:opacity-50"
-            >
-              {prompt}
-            </button>
-          ))}
         </div>
 
         {/* Input Form */}
@@ -255,7 +259,7 @@ export const AiMentorModal: React.FC<AiMentorModalProps> = ({ isOpen, onClose })
             value={inputPrompt}
             onChange={(e) => setInputPrompt(e.target.value)}
             disabled={isLoading}
-            placeholder="Tanyakan izin usaha Anda (misal: syarat NIB keripik, biaya halal, SPP-IRT)..."
+            placeholder="Ketik pertanyaan izin usaha Anda (misal: syarat NIB, cara daftar halal, SPP-IRT)..."
             className="flex-1 text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-emerald-600 focus:bg-white transition-all disabled:opacity-60"
           />
           <button

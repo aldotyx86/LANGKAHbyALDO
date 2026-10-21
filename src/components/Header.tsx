@@ -36,6 +36,9 @@ export const Header: React.FC<HeaderProps> = ({
   const { 
     userRole, 
     currentUmkm, 
+    currentPendamping,
+    currentAdminDinas,
+    pendampingList,
     umkmList, 
     aiQuota,
     loginAsUmkm, 
@@ -70,18 +73,41 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
-      {/* Top context bar: Pulau Lombok 75.000 UMKM & 5 Kab/Kota */}
+      {/* Top context bar: Identitas Sesi Siapa yang Login & Konteks Pulau Lombok */}
       <div className="bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-950 text-white text-xs px-4 py-1.5 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 bg-amber-400 text-slate-950 font-bold px-2 py-0.5 rounded-full text-[10px] tracking-wide uppercase">
-            Asta Cita Digital
-          </span>
-          <span className="text-slate-200">
-            Pulau Lombok: <strong className="text-amber-300 font-bold">75.000 UMKM</strong> (Mataram, Lobar, Loteng, Lotim, KLU) vs <strong className="text-emerald-300 font-bold">8 Tenaga Pendamping</strong>
-          </span>
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Active Session Pill: Bedakan Siapa yang Login */}
+          {userRole === 'umkm' ? (
+            <div className="inline-flex items-center gap-1.5 bg-emerald-500/25 text-emerald-200 border border-emerald-400/40 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Sesi: 👤 Pelaku UMKM (<strong>{currentUmkm?.brandName || 'UMKM Binaan'}</strong> - {currentUmkm?.district || 'Lombok'})</span>
+            </div>
+          ) : userRole === 'pendamping' ? (
+            <div className="inline-flex items-center gap-1.5 bg-cyan-500/25 text-cyan-200 border border-cyan-400/40 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              <span>Sesi: 🛡️ Pendamping Lapangan (<strong>{currentPendamping.name}</strong> • {currentPendamping.badgeCode})</span>
+            </div>
+          ) : (
+            <div className="inline-flex items-center gap-1.5 bg-amber-500/25 text-amber-200 border border-amber-400/40 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+              <span>Sesi: 🏛️ Admin Dinas NTB & BI (<strong>{currentAdminDinas.name}</strong>)</span>
+            </div>
+          )}
+
+          <button
+            onClick={onOpenAuth}
+            className="text-[11px] text-amber-300 hover:text-white underline font-semibold transition-colors cursor-pointer ml-1"
+            title="Ganti login antara Pelaku UMKM atau Pendamping Lapangan"
+          >
+            Ganti / Masuk Akun Lain
+          </button>
         </div>
         
         <div className="flex items-center gap-3 text-[11px] text-slate-300">
+          <span className="hidden lg:inline text-slate-400">
+            Lombok: <strong className="text-white">75.000 UMKM</strong> vs <strong className="text-emerald-400">8 Pendamping</strong>
+          </span>
+
           <button
             onClick={onOpenArchitecture}
             className="flex items-center gap-1 text-teal-300 hover:text-white transition-colors cursor-pointer bg-white/10 px-2 py-0.5 rounded-md"
@@ -91,8 +117,6 @@ export const Header: React.FC<HeaderProps> = ({
             <span>Arsitektur Stack</span>
           </button>
           
-          <span className="hidden md:inline">Portofolio Bank Indonesia (BI) NTB 2024-2025</span>
-
           <button 
             onClick={resetDemoData}
             title="Reset data demo ke awal"
@@ -233,9 +257,6 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Bot className="w-4 h-4" />
               <span>Mentor AI</span>
-              <span className="bg-slate-950 text-amber-300 text-[10px] px-1.5 py-0.2 rounded-md font-bold">
-                {aiQuota}
-              </span>
             </button>
 
             {/* Streak & XP for UMKM */}
@@ -263,33 +284,53 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative">
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center gap-2 px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors border border-slate-200 text-left cursor-pointer"
+                className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xl transition-all border text-left cursor-pointer ${
+                  userRole === 'umkm'
+                    ? 'bg-emerald-50 hover:bg-emerald-100/70 border-emerald-200'
+                    : userRole === 'pendamping'
+                    ? 'bg-cyan-50 hover:bg-cyan-100/70 border-cyan-300'
+                    : 'bg-amber-50 hover:bg-amber-100/70 border-amber-300'
+                }`}
               >
-                {isStaffRole ? (
-                  <div className="w-8 h-8 rounded-lg bg-teal-800 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                    <ShieldCheck className="w-4 h-4 text-amber-400" />
-                  </div>
-                ) : (
+                {userRole === 'umkm' ? (
                   <img 
                     src={currentUmkm?.avatarUrl || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80'} 
                     alt="avatar" 
-                    className="w-8 h-8 rounded-lg object-cover border border-slate-300"
+                    className="w-8 h-8 rounded-lg object-cover border border-emerald-400"
+                  />
+                ) : userRole === 'pendamping' ? (
+                  <img 
+                    src={currentPendamping.avatarUrl} 
+                    alt={currentPendamping.name} 
+                    className="w-8 h-8 rounded-lg object-cover border-2 border-cyan-500 shadow-2xs"
+                  />
+                ) : (
+                  <img 
+                    src={currentAdminDinas.avatarUrl} 
+                    alt={currentAdminDinas.name} 
+                    className="w-8 h-8 rounded-lg object-cover border-2 border-amber-500 shadow-2xs"
                   />
                 )}
 
                 <div className="text-left hidden sm:block">
-                  <div className="text-xs font-bold text-slate-800 flex items-center gap-1">
-                    <span className="truncate max-w-[120px]">
+                  <div className="text-xs font-black text-slate-800 flex items-center gap-1">
+                    <span className="truncate max-w-[130px]">
                       {userRole === 'admin_dinas' 
-                        ? 'Admin Dinas NTB'
+                        ? currentAdminDinas.name 
                         : userRole === 'pendamping'
-                        ? 'Pendamping Lapangan'
+                        ? currentPendamping.name 
                         : currentUmkm?.brandName}
                     </span>
-                    <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                   </div>
-                  <div className="text-[10px] text-slate-500 truncate max-w-[120px]">
-                    {isStaffRole ? '8 Petugas vs 75k' : currentUmkm?.region.replace('Kabupaten ', '')}
+                  <div className="text-[10px] font-semibold text-slate-600 truncate max-w-[130px] flex items-center gap-1">
+                    {userRole === 'umkm' ? (
+                      <span className="text-emerald-700">👤 UMKM • {currentUmkm?.district}</span>
+                    ) : userRole === 'pendamping' ? (
+                      <span className="text-indigo-800">🛡️ {currentPendamping.badgeCode} • {currentPendamping.assignedRegion.replace('Kabupaten ', '')}</span>
+                    ) : (
+                      <span className="text-amber-800">🏛️ Dinas Prov & BI NTB</span>
+                    )}
                   </div>
                 </div>
               </button>
@@ -297,110 +338,150 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Dropdown Menu */}
               {isUserMenuOpen && (
                 <div 
-                  className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 text-sm animate-in fade-in-50 zoom-in-95 duration-100"
+                  className="absolute right-0 mt-2 w-80 max-h-[85vh] overflow-y-auto bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 text-sm animate-in fade-in-50 zoom-in-95 duration-100"
                   onMouseLeave={() => setIsUserMenuOpen(false)}
                 >
-                  <div className="px-3 py-2 border-b border-slate-100 mb-1">
-                    <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                      Simulasi Peran Pengguna (Multi-Role)
-                    </p>
-                    <p className="text-xs text-slate-600 mt-0.5">
-                      Uji coba langsung alur UMKM vs Pendamping Lapangan:
-                    </p>
+                  {/* Current Active Session Card */}
+                  <div className={`p-3 rounded-xl border mb-3 ${
+                    userRole === 'umkm'
+                      ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950'
+                      : userRole === 'pendamping'
+                      ? 'bg-indigo-50/70 border-indigo-200 text-indigo-950'
+                      : 'bg-amber-50/70 border-amber-200 text-amber-950'
+                  }`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${
+                        userRole === 'umkm'
+                          ? 'bg-emerald-600 text-white'
+                          : userRole === 'pendamping'
+                          ? 'bg-indigo-600 text-white'
+                          : 'bg-amber-500 text-slate-950'
+                      }`}>
+                        {userRole === 'umkm' ? 'Sesi: Pelaku UMKM' : userRole === 'pendamping' ? 'Sesi: Tenaga Pendamping' : 'Sesi: Admin Dinas'}
+                      </span>
+                      <span className="text-[10px] text-slate-500 font-mono">Aktif</span>
+                    </div>
+
+                    <div className="font-bold text-xs text-slate-900 mt-1">
+                      {userRole === 'umkm' ? currentUmkm?.brandName : userRole === 'pendamping' ? currentPendamping.name : currentAdminDinas.name}
+                    </div>
+                    <div className="text-[10px] text-slate-600">
+                      {userRole === 'umkm' 
+                        ? `Pemilik: ${currentUmkm?.ownerName} (${currentUmkm?.district}, ${currentUmkm?.region.replace('Kabupaten ', '')})`
+                        : userRole === 'pendamping'
+                        ? `Wilayah: ${currentPendamping.assignedRegion} (${currentPendamping.districtCoverage})`
+                        : `${currentAdminDinas.position}`}
+                    </div>
                   </div>
 
-                  {/* Switch to Staff Roles */}
-                  <button
-                    onClick={() => {
-                      loginAsPendamping();
-                      setActiveTab('admin');
-                      setIsUserMenuOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                      userRole === 'pendamping'
-                        ? 'bg-teal-50 text-teal-900 font-bold border border-teal-200'
-                        : 'hover:bg-slate-100 text-slate-700'
-                    }`}
-                  >
-                    <div className="w-7 h-7 rounded-lg bg-teal-800 text-white flex items-center justify-center">
-                      <ShieldCheck className="w-4 h-4 text-amber-300" />
+                  {/* Switch to 8 Pendamping */}
+                  <div className="mb-3">
+                    <p className="px-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                      <span>Pilih 8 Pendamping Lapangan:</span>
+                      <span className="text-[9px] text-indigo-600 font-normal">8 Petugas Resmi</span>
+                    </p>
+                    <div className="space-y-1 max-h-40 overflow-y-auto pr-1">
+                      {pendampingList.map((pend) => (
+                        <button
+                          key={pend.id}
+                          onClick={() => {
+                            loginAsPendamping(pend.id);
+                            setActiveTab('admin');
+                            setIsUserMenuOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer text-xs ${
+                            userRole === 'pendamping' && currentPendamping.id === pend.id
+                              ? 'bg-indigo-100 text-indigo-950 font-bold border border-indigo-300'
+                              : 'hover:bg-slate-100 text-slate-700'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 truncate">
+                            <img src={pend.avatarUrl} alt="" className="w-6 h-6 rounded-md object-cover shrink-0" />
+                            <div className="truncate">
+                              <div className="font-semibold text-[11px] truncate">{pend.name}</div>
+                              <div className="text-[9px] text-slate-500 truncate">{pend.assignedRegion.replace('Kabupaten ', '')} • {pend.badgeCode}</div>
+                            </div>
+                          </div>
+                          {userRole === 'pendamping' && currentPendamping.id === pend.id && (
+                            <span className="text-indigo-700 text-xs font-bold shrink-0">✓</span>
+                          )}
+                        </button>
+                      ))}
                     </div>
-                    <div>
-                      <div className="text-xs font-bold">Pendamping Lapangan (8 Petugas)</div>
-                      <div className="text-[10px] text-slate-500">Membina 5 Kab/Kota di Lombok</div>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      loginAsAdminDinas();
-                      setActiveTab('admin');
-                      setIsUserMenuOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer mt-1 ${
-                      userRole === 'admin_dinas'
-                        ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200'
-                        : 'hover:bg-slate-100 text-slate-700'
-                    }`}
-                  >
-                    <div className="w-7 h-7 rounded-lg bg-emerald-800 text-white flex items-center justify-center">
-                      <Building2 className="w-4 h-4 text-emerald-300" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold">Admin Dinas Provinsi & BI NTB</div>
-                      <div className="text-[10px] text-slate-500">Akses Penuh Lintas Wilayah</div>
-                    </div>
-                  </button>
-
-                  <div className="my-1 border-t border-slate-100" />
+                  </div>
 
                   {/* Switch to Sample UMKM */}
-                  <p className="px-3 py-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                    Akun Contoh UMKM Lombok:
-                  </p>
+                  <div className="mb-3 border-t border-slate-100 pt-2">
+                    <p className="px-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                      Pilih Akun Contoh UMKM Binaan:
+                    </p>
+                    <div className="space-y-1 max-h-40 overflow-y-auto pr-1">
+                      {umkmList.map((umkm) => (
+                        <button
+                          key={umkm.id}
+                          onClick={() => {
+                            loginAsUmkm(umkm.id);
+                            setActiveTab('roadmap');
+                            setIsUserMenuOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer text-xs ${
+                            userRole === 'umkm' && currentUmkm?.id === umkm.id
+                              ? 'bg-emerald-100 text-emerald-950 font-bold border border-emerald-300'
+                              : 'hover:bg-slate-100 text-slate-700'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 truncate">
+                            <img src={umkm.avatarUrl} alt="" className="w-6 h-6 rounded-md object-cover shrink-0" />
+                            <div className="truncate">
+                              <div className="font-semibold text-[11px] truncate">{umkm.brandName}</div>
+                              <div className="text-[9px] text-slate-500 truncate">{umkm.ownerName} • {umkm.district}</div>
+                            </div>
+                          </div>
+                          {userRole === 'umkm' && currentUmkm?.id === umkm.id && (
+                            <span className="text-emerald-700 text-xs font-bold shrink-0">✓</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-                  {umkmList.map((umkm) => (
+                  {/* Switch to Admin Dinas */}
+                  <div className="border-t border-slate-100 pt-2 mb-2">
                     <button
-                      key={umkm.id}
                       onClick={() => {
-                        loginAsUmkm(umkm.id);
-                        setActiveTab('roadmap');
+                        loginAsAdminDinas();
+                        setActiveTab('admin');
                         setIsUserMenuOpen(false);
                       }}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                        userRole === 'umkm' && currentUmkm?.id === umkm.id
-                          ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200'
+                      className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer text-xs ${
+                        userRole === 'admin_dinas'
+                          ? 'bg-amber-100 text-amber-950 font-bold border border-amber-300'
                           : 'hover:bg-slate-100 text-slate-700'
                       }`}
                     >
-                      <img 
-                        src={umkm.avatarUrl} 
-                        alt={umkm.brandName} 
-                        className="w-7 h-7 rounded-lg object-cover"
-                      />
-                      <div className="truncate flex-1">
-                        <div className="text-xs font-bold truncate">{umkm.brandName}</div>
-                        <div className="text-[10px] text-slate-500 flex items-center gap-1">
-                          <span>{umkm.district}</span>
-                          <span>•</span>
-                          <span className="capitalize">{umkm.umkmClass.replace('_', ' ')}</span>
+                      <div className="flex items-center gap-2">
+                        <img src={currentAdminDinas.avatarUrl} alt="" className="w-6 h-6 rounded-md object-cover" />
+                        <div>
+                          <div className="font-semibold text-[11px]">{currentAdminDinas.name}</div>
+                          <div className="text-[9px] text-slate-500">Admin Dinas Prov NTB & BI</div>
                         </div>
                       </div>
+                      {userRole === 'admin_dinas' && <span className="text-amber-800 text-xs font-bold">✓</span>}
                     </button>
-                  ))}
+                  </div>
 
-                  <div className="my-1 border-t border-slate-100" />
-
-                  <button
-                    onClick={() => {
-                      onOpenAuth();
-                      setIsUserMenuOpen(false);
-                    }}
-                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-emerald-700 hover:bg-emerald-50 transition-colors text-xs font-bold cursor-pointer"
-                  >
-                    <PlusCircle className="w-4 h-4" />
-                    <span>Daftarkan Usaha / UMKM Baru</span>
-                  </button>
+                  <div className="border-t border-slate-100 pt-2 space-y-1">
+                    <button
+                      onClick={() => {
+                        onOpenAuth();
+                        setIsUserMenuOpen(false);
+                      }}
+                      className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-900 text-white hover:bg-slate-800 text-xs font-bold cursor-pointer transition-colors"
+                    >
+                      <PlusCircle className="w-3.5 h-3.5" />
+                      <span>Buka Form Login / Daftar Usaha Baru</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

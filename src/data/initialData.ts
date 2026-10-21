@@ -1,4 +1,12 @@
-import { AgencyData, LegalitasItem, LombokRegion, TaskItem, UmkmProfile } from '../types';
+import { 
+  AdminDinasProfile, 
+  AgencyData, 
+  LegalitasItem, 
+  LombokRegion, 
+  PendampingProfile, 
+  TaskItem, 
+  UmkmProfile 
+} from '../types';
 
 export const LOMBOK_REGIONS_WITH_DISTRICTS: Record<LombokRegion, string[]> = {
   'Kota Mataram': [
@@ -1064,3 +1072,154 @@ export const INITIAL_UMKM_USERS: UmkmProfile[] = [
     missingDataNotes: []
   }
 ];
+
+export const OFFICIAL_PENDAMPING_LIST: PendampingProfile[] = [
+  {
+    id: 'pend-1',
+    nip: '19890412 201503 1 004',
+    username: 'fathur_lotim',
+    name: 'Fathurrahman, S.E.',
+    title: 'Koordinator Wilayah Pendamping Lombok Timur',
+    phone: '081912345671',
+    email: 'fathur.pendamping@langkah.id',
+    assignedRegion: 'Kabupaten Lombok Timur',
+    districtCoverage: 'Selong, Aikmel, Masbagik, Pringgasela',
+    specialization: 'Legalitas NIB OSS, Sertifikasi Halal BPJPH & Inkubasi',
+    agency: 'Dinas Koperasi & UKM Lotim / Mitra BI NTB',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+    totalDampingan: 9420,
+    verifiedCount: 148,
+    badgeCode: 'LOTIM-01'
+  },
+  {
+    id: 'pend-2',
+    nip: '19910815 201801 2 007',
+    username: 'safitri_sembalun',
+    name: 'Baiq Safitri Wardani, M.M.',
+    title: 'Tenaga Pendamping Wilayah Rinjani & Agro',
+    phone: '081912345672',
+    email: 'safitri.wardani@langkah.id',
+    assignedRegion: 'Kabupaten Lombok Timur',
+    districtCoverage: 'Sembalun, Pringgabaya, Sambelia, Suela',
+    specialization: 'Hilirisasi Kopi Rinjani, Agribisnis & Kurasi Bank Indonesia',
+    agency: 'Bank Indonesia NTB / Dinas Pertanian Lotim',
+    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
+    totalDampingan: 8850,
+    verifiedCount: 122,
+    badgeCode: 'LOTIM-02'
+  },
+  {
+    id: 'pend-3',
+    nip: '19930220 201902 1 003',
+    username: 'danuarta_pesisir',
+    name: 'Lalu Danuarta, S.Kom.',
+    title: 'Tenaga Pendamping Pesisir & Digital Marketing',
+    phone: '081912345673',
+    email: 'danuarta@langkah.id',
+    assignedRegion: 'Kabupaten Lombok Timur',
+    districtCoverage: 'Keruak, Jerowaru, Labuhan Haji, Sakra',
+    specialization: 'Olahan Perikanan Laut & Optimasi Meta Ads/Facebook Pro',
+    agency: 'Dinas Kelautan & Perikanan / Dinas Koperasi Lotim',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
+    totalDampingan: 9110,
+    verifiedCount: 97,
+    badgeCode: 'LOTIM-03'
+  },
+  {
+    id: 'pend-4',
+    nip: '19940710 202001 2 005',
+    username: 'nurhaliza_loteng',
+    name: 'Siti Nurhaliza, S.E.',
+    title: 'Tenaga Pendamping Wilayah Lombok Tengah & Mandalika',
+    phone: '081912345674',
+    email: 'nurhaliza.loteng@langkah.id',
+    assignedRegion: 'Kabupaten Lombok Tengah',
+    districtCoverage: 'Praya, Pujut (KEK Mandalika), Jonggat, Kopang',
+    specialization: 'Pencatatan Keuangan Digital, QRIS Merchant & Event Wisata',
+    agency: 'Dinas Koperasi & UKM Lombok Tengah / BI NTB',
+    avatarUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&w=200&q=80',
+    totalDampingan: 14200,
+    verifiedCount: 165,
+    badgeCode: 'LOTENG-01'
+  },
+  {
+    id: 'pend-5',
+    nip: '19901103 201603 1 002',
+    username: 'irwan_lobar',
+    name: 'Raden Irwan Saputra, S.T.',
+    title: 'Tenaga Pendamping Wilayah Lombok Barat',
+    phone: '081912345675',
+    email: 'irwan.lobar@langkah.id',
+    assignedRegion: 'Kabupaten Lombok Barat',
+    districtCoverage: 'Gerung, Narmada, Gunungsari, Sekotong, Kediri',
+    specialization: 'Standardisasi IKM, Rumah Kemasan & Uji Laboratorium Mutu',
+    agency: 'Dinas Perindustrian NTB (UPTD Rumah Kemasan)',
+    avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80',
+    totalDampingan: 12400,
+    verifiedCount: 139,
+    badgeCode: 'LOBAR-01'
+  },
+  {
+    id: 'pend-6',
+    nip: '19920518 201704 2 006',
+    username: 'sriasih_mataram',
+    name: 'Ni Wayan Sri Asih, S.Pd.',
+    title: 'Tenaga Pendamping Wilayah Kota Mataram',
+    phone: '081912345676',
+    email: 'sriasih.mataram@langkah.id',
+    assignedRegion: 'Kota Mataram',
+    districtCoverage: 'Cakranegara, Ampenan, Sekarbela, Mataram Kota',
+    specialization: 'Kriya Mutiara, Songket Fashion & HKI Hak Merek Dagang',
+    agency: 'Dinas Perdagangan & Dekranasda Kota Mataram',
+    avatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80',
+    totalDampingan: 11600,
+    verifiedCount: 204,
+    badgeCode: 'MTRM-01'
+  },
+  {
+    id: 'pend-7',
+    nip: '19950129 202102 1 001',
+    username: 'hidayat_klu',
+    name: 'M. Hidayatullah, S.P.',
+    title: 'Tenaga Pendamping Wilayah Lombok Utara (KLU)',
+    phone: '081912345677',
+    email: 'hidayat.klu@langkah.id',
+    assignedRegion: 'Kabupaten Lombok Utara',
+    districtCoverage: 'Tanjung, Bayan, Kayangan, Pemenang (3 Gili)',
+    specialization: 'P-IRT Dinkes, Hasil Olahan Mete & Pangan Wisatawan',
+    agency: 'Dinas Kesehatan & Dinas Pariwisata KLU',
+    avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80',
+    totalDampingan: 8200,
+    verifiedCount: 88,
+    badgeCode: 'KLU-01'
+  },
+  {
+    id: 'pend-8',
+    nip: '19880922 201402 2 003',
+    username: 'rahmatia_keuangan',
+    name: 'Baiq Rahmatia, S.Sos.',
+    title: 'Tenaga Pendamping Akses Permodalan & KUR',
+    phone: '081912345678',
+    email: 'rahmatia@langkah.id',
+    assignedRegion: 'Kabupaten Lombok Timur',
+    districtCoverage: 'Sikur, Terara, Montong Gading, Sakra Barat',
+    specialization: 'Subsidi Bunga KUR, Fasilitasi Perbankan & Koperasi Mandiri',
+    agency: 'Dinas Koperasi & UKM Prov NTB / Bank NTB Syariah',
+    avatarUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=200&q=80',
+    totalDampingan: 10720,
+    verifiedCount: 115,
+    badgeCode: 'LOTIM-04'
+  }
+];
+
+export const INITIAL_ADMIN_DINAS: AdminDinasProfile = {
+  id: 'admin-dinas-prov',
+  nip: '19750314 199903 1 002',
+  username: 'admin.dinas.ntb',
+  name: 'Ir. H. Syamsul Hadi, M.Si.',
+  agency: 'Dinas Koperasi & UKM Provinsi NTB',
+  position: 'Kepala Bidang Pemberdayaan UMKM & Koordinator Pokja Asta Cita NTB',
+  phone: '08113901234',
+  email: 'syamsul.hadi@ntbprov.go.id',
+  avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80'
+};

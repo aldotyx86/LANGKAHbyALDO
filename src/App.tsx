@@ -88,15 +88,12 @@ const MainContent: React.FC = () => {
         <button
           onClick={() => setIsAiMentorOpen(true)}
           className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-slate-950 font-black text-xs rounded-full shadow-2xl transition-all cursor-pointer hover:scale-105 border-2 border-amber-300 group"
-          title="Tanya Asisten AI Legalitas (Gemini 3.8 Flash)"
+          title="Tanya Asisten AI Legalitas"
         >
           <div className="w-6 h-6 rounded-full bg-slate-950 text-amber-300 flex items-center justify-center font-bold">
             <Bot className="w-3.5 h-3.5" />
           </div>
           <span>Mentor AI Legalitas</span>
-          <span className="bg-slate-950 text-amber-300 text-[10px] px-1.5 py-0.5 rounded-full font-mono">
-            {aiQuota}
-          </span>
         </button>
       </div>
 

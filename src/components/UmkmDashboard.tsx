@@ -18,7 +18,8 @@ import {
   Bot,
   Calendar,
   Layers,
-  HelpCircle
+  HelpCircle,
+  UserCheck
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { TaskItem, UmkmClass } from '../types';
@@ -39,7 +40,7 @@ export const UmkmDashboard: React.FC<UmkmDashboardProps> = ({
   onOpenAiMentor,
   onNavigateToLegalitas
 }) => {
-  const { currentUmkm, tasks, agencies } = useApp();
+  const { currentUmkm, tasks, agencies, userRole, currentPendamping } = useApp();
   const [selectedTask, setSelectedTask] = useState<TaskItem | null>(null);
 
   if (!currentUmkm) return null;
@@ -102,6 +103,67 @@ export const UmkmDashboard: React.FC<UmkmDashboardProps> = ({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
       
+      {/* Distinction Banner: Siapa yang sedang Login */}
+      {userRole === 'umkm' ? (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
+              <UserCheck className="w-5 h-5 text-emerald-200" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-950 bg-emerald-200 px-2 py-0.5 rounded-full">
+                  Sesi Login: Pelaku UMKM
+                </span>
+                <span className="text-xs text-slate-500 font-medium">Binaan Bank Indonesia & Multi-Dinas Lombok</span>
+              </div>
+              <div className="text-sm font-black text-slate-900 mt-0.5">
+                {currentUmkm.brandName} • <span className="font-semibold text-slate-600">{currentUmkm.ownerName}</span> ({currentUmkm.district}, {currentUmkm.region.replace('Kabupaten ', '')})
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={onOpenMissingData}
+              className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 font-bold text-slate-700 text-xs shadow-2xs cursor-pointer"
+            >
+              Cek Berkas Kurang
+            </button>
+            <button 
+              onClick={onOpenIdCard}
+              className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs cursor-pointer"
+            >
+              Kartu Digital UMKM
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-700 text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
+              <ShieldCheck className="w-5 h-5 text-indigo-200" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-wider text-indigo-950 bg-indigo-200 px-2 py-0.5 rounded-full">
+                  Mode Peninjauan Pendamping Lapangan ({currentPendamping.badgeCode})
+                </span>
+                <span className="text-xs text-indigo-700 font-semibold">{currentPendamping.assignedRegion}</span>
+              </div>
+              <div className="text-sm font-black text-slate-900 mt-0.5">
+                Petugas: {currentPendamping.name} • <span className="text-slate-600 font-medium">Sedang meninjau kemajuan: <strong>{currentUmkm.brandName}</strong></span>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-slate-500 hidden md:inline">Tugas: verifikasi berkas UMKM</span>
+            <span className="px-2.5 py-1 rounded-lg bg-indigo-100 text-indigo-900 font-bold font-mono text-[11px]">
+              {currentPendamping.badgeCode}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Hero Card */}
       <div className="bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden border border-emerald-900/50">
         <div className="absolute top-0 right-0 -mt-10 -mr-10 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
