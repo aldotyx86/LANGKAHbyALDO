@@ -5,7 +5,7 @@ import { GoogleGenAI } from '@google/genai';
  * Sesuai panduan keamanan:
  * 1. API Key HANYA dibaca di server (process.env.GEMINI_API_KEY).
  * 2. Header 'User-Agent': 'aistudio-build' disertakan pada httpOptions.
- * 3. Model yang digunakan: 'gemini-3.8-flash' (andal, cepat, hemat kuota).
+ * 3. Model yang digunakan: 'gemini-2.5-flash' (andal, cepat, hemat kuota).
  */
 export const getGeminiClient = () => {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -23,7 +23,7 @@ export const getGeminiClient = () => {
   });
 };
 
-export const GEMINI_MODEL = 'gemini-3.8-flash';
+export const GEMINI_MODEL = 'gemini-2.5-flash';
 
 export const AI_MENTOR_SYSTEM_INSTRUCTION = `
 Anda adalah "Langkah Mentor AI" — Konsultan Ahli Legalitas & Akselerasi Bisnis IKM/UMKM untuk Pulau Lombok, Provinsi Nusa Tenggara Barat (NTB).

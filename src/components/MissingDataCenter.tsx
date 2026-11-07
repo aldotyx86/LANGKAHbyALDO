@@ -31,7 +31,7 @@ export const MissingDataCenter: React.FC = () => {
     {
       category: 'Legalitas',
       item: 'Nomor Induk Berusaha (NIB 13 Digit)',
-      dinas: 'Dinas Koperasi & UKM / PTSP Lotim',
+      dinas: 'Dinas Koperasi & UKM / DPMPTSP Kab/Kota Lombok',
       impact: 'Syarat mutlak untuk semua program bantuan pemerintah',
       isResolved: currentUmkm.assessment.hasNib
     },
@@ -44,8 +44,8 @@ export const MissingDataCenter: React.FC = () => {
     },
     {
       category: 'Legalitas',
-      item: 'Izin Edar P-IRT / Rekomendasi Dinkes Lotim',
-      dinas: 'Dinas Kesehatan & Perindustrian Lotim',
+      item: 'Izin Edar P-IRT / Rekomendasi Dinkes',
+      dinas: 'Dinas Kesehatan & Perindustrian Kab/Kota Lombok',
       impact: 'Tiket masuk ke rak minimarket & ritel modern',
       isResolved: currentUmkm.assessment.hasPirtOrBpom
     },
@@ -59,7 +59,7 @@ export const MissingDataCenter: React.FC = () => {
     {
       category: 'Pemasaran Digital',
       item: 'Titik Lokasi Usaha di Google Maps',
-      dinas: 'Dinas Pariwisata & Dinas Kominfo Lotim',
+      dinas: 'Dinas Pariwisata & Dinas Kominfo Kab/Kota Lombok',
       impact: 'Agar turis dan pembeli mudah menemukan lokasi fisik',
       isResolved: currentUmkm.assessment.hasGoogleMaps
     },
@@ -80,7 +80,7 @@ export const MissingDataCenter: React.FC = () => {
     {
       category: 'Standar Mutu',
       item: 'Kemasan Ritel Standar (Alufoil / Standing Pouch)',
-      dinas: 'Dinas Perindustrian Kab. Lombok Timur',
+      dinas: 'Dinas Perindustrian Kab/Kota se-Pulau Lombok',
       impact: 'Menaikkan nilai jual produk hingga 200%',
       isResolved: currentUmkm.assessment.hasStandardPackaging
     }

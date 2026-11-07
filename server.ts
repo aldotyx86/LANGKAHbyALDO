@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { GoogleGenAI } from '@google/genai';
-import { supabaseAdmin } from './src/lib/supabaseAdmin.js';
 
 dotenv.config();
 
@@ -12,7 +11,10 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production' || process.argv.includes('--production');
+if (process.argv.includes('--production')) {
+  process.env.NODE_ENV = 'production';
+}
 
 // Body Parser Middleware
 app.use(express.json({ limit: '25mb' }));
@@ -130,7 +132,7 @@ app.post('/api/ai-mentor', async (req: Request, res: Response) => {
       });
     }
 
-    // 2. Jika tidak ada di knowledge base dasar, gunakan Gemini 3.8 Flash jika API Key tersedia
+    // 2. Jika tidak ada di knowledge base dasar, gunakan Gemini 2.5 Flash jika API Key tersedia
     const apiKey = process.env.GEMINI_API_KEY;
     if (apiKey && apiKey !== 'MY_GEMINI_API_KEY') {
       try {
@@ -157,7 +159,7 @@ ${context ? `Konteks Profil UMKM saat ini: ${JSON.stringify(context)}` : ''}
 `;
 
         const response = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
+          model: 'gemini-2.5-flash',
           contents: prompt,
           config: {
             systemInstruction,

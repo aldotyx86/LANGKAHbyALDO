@@ -28,7 +28,7 @@ Repository: [https://github.com/aldotyx86/LANGKAHbyALDO](https://github.com/aldo
 
 ## 🛠️ Tech Stack & Arsitektur
 
-- **Frontend**: React 18, TypeScript, Tailwind CSS, Lucide React Icons.
+- **Frontend**: React 19, TypeScript, Vite 8, Tailwind CSS v4, Lucide React Icons.
 - **Backend & Database**: Supabase (PostgreSQL 15+, Multi-Role Row Level Security, Composite Indexes untuk 75.000 baris).
 - **AI Intelligence**: Google Gemini API (@google/genai) via server-side routing dengan rate limit per akun.
 - **Hosting Target**: GitHub -> Vercel (Auto Deploy on push).

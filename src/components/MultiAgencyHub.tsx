@@ -94,7 +94,7 @@ export const MultiAgencyHub: React.FC = () => {
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement('a');
       link.setAttribute('href', encodedUri);
-      link.setAttribute('download', `Satu_Data_UMKM_Lombok_Timur_LANGKAH_${new Date().toISOString().split('T')[0]}.csv`);
+      link.setAttribute('download', `Satu_Data_UMKM_Lombok_LANGKAH_${new Date().toISOString().split('T')[0]}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -114,7 +114,7 @@ export const MultiAgencyHub: React.FC = () => {
                 Interoperabilitas Multi-Dinas
               </span>
               <span className="text-xs text-emerald-200">
-                Satu Data UMKM Lombok Timur & NTB
+                Satu Data UMKM Lombok (5 Kab/Kota) & NTB
               </span>
             </div>
 
